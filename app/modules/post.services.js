@@ -1,4 +1,4 @@
-import posts from "../../db";
+import posts from "../../db/index.js";
 
 const getAllPost = () => {
   const allPosts = posts;
@@ -7,7 +7,7 @@ const getAllPost = () => {
 
 const getSinglePost = (id) => {
   try {
-    const post = posts.find((post) => post.id === id);
+    const post = posts.find((p) => p._id === id);
     return post;
   } catch (error) {
     throw new Error("User not Exis with this id");
@@ -17,24 +17,26 @@ const getSinglePost = (id) => {
 const updateSinglePost = (id, valueToUpdate) => {
   try {
     const updatedPosts = posts.map((p) => {
-      if (p.id === id) {
+      if (p._id === id) {
         return {
           ...p,
           ...valueToUpdate,
         };
       }
+      return p;
     });
-    const updatePost = posts.find((p) => p.id === id);
+    const updatePost = posts.find((p) => p._id === id);
     return updatePost;
   } catch (error) {
-    throw new Error("User not Exis with this id");
+    throw new Error(error);
   }
 };
 
 const deleteAPost = (id) => {
   try {
+    const deletedPost = posts.find((p) => p._id === id);
     const updatedPosts = posts.filter((p) => p.id !== id);
-    return updatedPosts;
+    return deletedPost;
   } catch (error) {
     throw new Error("User not Exis with this id");
   }
@@ -42,8 +44,12 @@ const deleteAPost = (id) => {
 
 const createNewPost = (post) => {
   try {
-    const insertNewPost = posts.push(post);
-    return post;
+    const newPost = {
+      _id: crypto.randomUUID(),
+      ...post,
+    };
+    const insertNewPost = posts.push(newPost);
+    return newPost;
   } catch (error) {
     throw new Error("Try to a valid post");
   }
@@ -53,6 +59,6 @@ export const postServices = {
   getAllPost,
   getSinglePost,
   updateSinglePost,
-  updateSinglePost,
   deleteAPost,
+  createNewPost,
 };
